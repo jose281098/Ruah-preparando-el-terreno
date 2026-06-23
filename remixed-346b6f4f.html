@@ -235,13 +235,16 @@ const CATS = [
 
 // ── ESTADO ────────────────────────────────────────────────────────────────────
 let st = {};
-try{ st = JSON.parse(localStorage.getItem('ruah-t6') || '{}'); }catch(e){}
+// Nueva clave — borra estado anterior corrompido
+localStorage.removeItem('ruah-t6');
+localStorage.removeItem('ruah-t5');
+try{ st = JSON.parse(localStorage.getItem('ruah-t7') || '{}'); }catch(e){}
 if(!st.done) st.done = [false,false,false,false,false];
 if(!st.af)   st.af   = [[],[],[],[],[]];
 if(!st.wr)   st.wr   = ['','','','',''];
 if(!st.cat)  st.cat  = null;
 if(st.cur === undefined) st.cur = 0;
-function save(){ try{ localStorage.setItem('ruah-t6', JSON.stringify(st)); }catch(e){} }
+function save(){ try{ localStorage.setItem('ruah-t7', JSON.stringify(st)); }catch(e){} }
 
 const allDone = () => st.done.every(Boolean);
 
