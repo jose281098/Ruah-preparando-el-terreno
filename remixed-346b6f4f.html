@@ -134,19 +134,40 @@ textarea:read-only{opacity:.7}
 
 <script>
 // ── RELOJ ─────────────────────────────────────────────────────────────────────
-// Inicio: lunes 22 jun 2025, 00:00 Costa Rica (UTC-6 = 06:00 UTC)
-const START = new Date('2025-06-22T06:00:00Z');
+// Semana: lunes 22 jun 2025. Cada día abre a las 00:00 hora Costa Rica (UTC-6).
+// Lun 22 = día 0, Mar 23 = día 1, ... Vie 26 = día 4, Sáb 27 = cierre
+
+function getNowCR(){
+  // Obtiene la fecha/hora actual en UTC-6 (Costa Rica)
+  const now = new Date();
+  const utc = now.getTime() + now.getTimezoneOffset() * 60000;
+  return new Date(utc - 6 * 3600000); // UTC-6
+}
 
 function daysOpen(){
-  const ms = Date.now() - START.getTime();
-  if(ms < 0) return 0;
-  return Math.min(Math.floor(ms / 86400000) + 1, 5);
+  const cr = getNowCR();
+  const start = new Date('2025-06-22T00:00:00'); // medianoche CR del lunes
+  // Comparar solo fechas en CR
+  const startDay = new Date(2025, 5, 22); // mes 5 = junio (0-indexed)
+  const todayCR = new Date(cr.getFullYear(), cr.getMonth(), cr.getDate());
+  const diffDays = Math.floor((todayCR - startDay) / 86400000);
+  if(diffDays < 0) return 0;
+  return Math.min(diffDays + 1, 5);
 }
-function satOpen(){ return Date.now() - START.getTime() >= 5 * 86400000; }
+
+function satOpen(){
+  const cr = getNowCR();
+  const todayCR = new Date(cr.getFullYear(), cr.getMonth(), cr.getDate());
+  const satDay = new Date(2025, 5, 28); // sábado 28 jun
+  return todayCR >= satDay;
+}
+
 function msToNext(){
-  const ms = Date.now() - START.getTime();
-  const passed = Math.floor(ms / 86400000);
-  return START.getTime() + (passed + 1) * 86400000 - Date.now();
+  const cr = getNowCR();
+  // Próxima medianoche en CR
+  const nextMidnight = new Date(cr.getFullYear(), cr.getMonth(), cr.getDate() + 1);
+  const diffCR = nextMidnight - cr;
+  return diffCR;
 }
 function fmt(ms){
   if(ms<=0) return '00:00:00';
